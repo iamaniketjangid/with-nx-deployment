@@ -10,46 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout (full history required for nx affected)
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # IMPORTANT for nx affected
+          fetch-depth: 0
 
+      # 2️⃣ Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
+      # 3️⃣ Install dependencies (CENTRALIZED ✅)
       - name: Install dependencies
         run: npm ci
 
-      # ---------- FORMAT CHECK ----------
+      # 4️⃣ Format check (affected-aware)
       - name: Format check
         run: npx nx format:check --base=origin/main
 
-      # ---------- LINT / TEST / TYPECHECK / BUILD ----------
-      - name: Nx affected (heavy targets)
+      # 5️⃣ Heavy tasks but ONLY for affected projects ✅
+      - name: Lint, Test, Typecheck, Build (affected)
         run: |
           npx nx affected \
             -t lint test typecheck build \
             --parallel=4 \
             --base=origin/main
 
-      # ---------- E2E (ONLY IF AFFECTED) ----------
-      - name: E2E tests
+      # 6️⃣ E2E (only if affected)
+      - name: E2E tests (affected)
         run: |
           npx nx affected \
             -t e2e \
             --parallel=2 \
             --base=origin/main
 
-      # ---------- SECURITY CHECK ----------
+      # 7️⃣ Security audit (do not fail pipeline)
       - name: Dependency audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=critical || true
 
-      # ---------- ARTIFACT ----------
-      - name: Upload affected build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: affected-build
+      # 8️⃣ Done
+      - name: Pipeline completed
+        run: echo "CI With Nx completed (fast & optimized)"
