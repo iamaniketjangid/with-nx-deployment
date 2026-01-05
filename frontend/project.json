@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "frontend/src",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'íº€ Frontend build started' && sleep 5 && echo 'âœ… Frontend build completed'"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'í·ª Frontend tests running' && sleep 2 && echo 'âœ… Frontend tests passed'"
+      }
+    }
+  },
+  "tags": []
+}
+
